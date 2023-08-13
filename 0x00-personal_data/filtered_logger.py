@@ -34,16 +34,18 @@ def filter_datum(fields: List[str], redaction: str,
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
-    '''Return a connection to mysql db'''
-    user = environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
+    """Return a connection to mysql db"""
+    username = environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
     password = environ.get('PERSONAL_DATA_DB_PASSWORD', '')
     host = environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
     database = environ.get('PERSONAL_DATA_DB_NAME')
 
-    return mysql.connector.connection.MySQLConnection(user=user,
-                                                      password=password,
-                                                      host=host,
-                                                      database=database)
+    cnx = mysql.connector.connection.MySQLConnection(user=username,
+                                                     password=password,
+                                                     host=host,
+                                                     database=database)
+
+    return cnx
 
 
 class RedactingFormatter(logging.Formatter):
@@ -66,18 +68,17 @@ class RedactingFormatter(logging.Formatter):
 
 
 def main() -> None:
-    '''Retrieves and display user table'''
+    """Retrieves and display user table"""
     db = get_db()
     cursor = db.cursor()
 
     cursor.execute("SELECT * FROM users;")
-    field_name = [i[0] for i in cursor.description]
-    logger - get_logger()()
+    field_names = [i[0] for i in cursor.description]
+    logger = get_logger()
 
     for row in cursor:
-        str_now = ''.join(f'{f}={str(r)}; ' for r, f in zip(row, field_names))
+        str_row = ''.join(f'{f}={str(r)}; ' for r, f in zip(row, field_names))
         logger.info(str_row.strip())
-
     cursor.close()
     db.close()
 
