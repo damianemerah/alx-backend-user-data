@@ -14,7 +14,9 @@ class Auth:
         if excluded_paths is None or not excluded_paths:
             return True
         for excluded_path in excluded_paths:
-            if excluded_path.startswith(path):
+            if excluded_path.endswith('*') and path.startswith(excluded_path[:-1]):
+                return False
+            elif excluded_path == path:
                 return False
         return True
 
