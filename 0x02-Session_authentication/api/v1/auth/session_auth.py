@@ -2,6 +2,7 @@
 """Session Auth"""
 import uuid
 from .auth import Auth
+import os
 
 
 class SessionAuth(Auth):
@@ -23,3 +24,11 @@ class SessionAuth(Auth):
         if session_id and isinstance(session_id, str):
             return self.user_id_by_session_id.get(session_id)
         return None
+
+    def current_user(self, request=None):
+        """
+        (overload) that returns a User instance based on a cookie value:
+        """
+        session_cookie = os.getenv('SESSION_NAME')
+        if session_cookie and session_cookie == '_my_session_id':
+            
