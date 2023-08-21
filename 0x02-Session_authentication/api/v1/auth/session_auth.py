@@ -3,6 +3,8 @@
 import uuid
 from .auth import Auth
 import os
+from typing import TypeVar
+from models.user import User
 
 
 class SessionAuth(Auth):
@@ -25,10 +27,12 @@ class SessionAuth(Auth):
             return self.user_id_by_session_id.get(session_id)
         return None
 
-    def current_user(self, request=None):
+    def current_user(self, request=None) -> TypeVar('User'):
         """
         (overload) that returns a User instance based on a cookie value:
         """
-        session_cookie = os.getenv('SESSION_NAME')
-        if session_cookie and session_cookie == '_my_session_id':
-            
+        if request:
+            session_id = self.session_cookie(request)
+            if session_id:
+                user_id = self.user_id_for_session_id(session_id)
+                return User.get(user_id)
