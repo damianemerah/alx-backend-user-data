@@ -23,15 +23,15 @@ def login_with_session():
         if u.is_valid_password(password):
             from api.v1.app import auth
             user_id = u.id
-            print(auth)
             session_id = auth.create_session(user_id)
             res = jsonify(u.to_json())
             res.set_cookie(getenv('SESSION_NAME'), session_id)
             return res
-        return jsonify(error='wrong password'), 402
+        return jsonify({'error': 'wrong password'}), 401
     return jsonify({"error": "no user found for this email"}), 404
 
 
+@app_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
 def logout():
     """ DELETE /auth_session/logout
     Return:
