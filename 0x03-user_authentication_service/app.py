@@ -110,7 +110,8 @@ def update_password() -> str:
     Update the password using the provided reset_token.
 
     Returns:
-        A JSON payload with the email and a message indicating the password update status.
+        A JSON payload with the email and a message indicating
+        the password update status.
     """
     email = request.form.get("email")
     reset_token = request.form.get("reset_token")
